@@ -67,11 +67,14 @@ func (s ParcelStore) GetByClient(client int) ([]Parcel, error) {
 
     err := rows.Scan(&p.Number, &p.Client, &p.Status, &p.Address, &p.CreatedAt)
     if err != nil {
-			return res, err
+			return nil, err
 		}
 		res = append(res, p)
 	}
-	
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
 	
 	return res, nil
 }

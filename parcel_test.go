@@ -2,15 +2,12 @@ package main
 
 import (
 	"database/sql"
-
 	"math/rand"
 	"testing"
 	"time"
 
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/assert"
-	
-	_ "modernc.org/sqlite"
 )
 
 var (
@@ -37,10 +34,8 @@ func TestAddGetDelete(t *testing.T) {
 	// prepare
 	// настройте подключение к БД
 	db, err := sql.Open("sqlite", "tracker.db")
-	if err != nil {
-		require.NoError(t, err)
-}
-defer db.Close()
+	require.NoError(t, err)
+	defer db.Close()
 
 	store := NewParcelStore(db)
 	parcel := getTestParcel()
@@ -66,8 +61,9 @@ defer db.Close()
 	require.NoError(t, err)
 	
 	_, err = store.Get(parcel.Number)
-	
-	require.ErrorIs(t, sql.ErrNoRows, err)
+
+	require.Error(t, err)
+	assert.ErrorIs(t, sql.ErrNoRows, err)
 }
 
 // TestSetAddress проверяет обновление адреса
